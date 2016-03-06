@@ -7,11 +7,11 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 public class PackageScanner {
-	Reflections reflections;
+	private Reflections reflections;
 	
-	Set<Class<?>> groups;
+	private Set<Class<?>> groups;
 	
-	String packageNames[];
+	private String packageNames[];
 	
 	public PackageScanner(String packageNames[]) {
 		this.packageNames = packageNames;
