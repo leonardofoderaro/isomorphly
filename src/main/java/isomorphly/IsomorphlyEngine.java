@@ -12,9 +12,8 @@ import org.reflections.Reflections;
 
 
 public class IsomorphlyEngine {
-	private PackageScanner packageScanner;
 
-	private Reflections reflections;
+	private PackageScanner packageScanner;
 
 	private List<Class<?>> groupAnnotations;
 
@@ -24,7 +23,7 @@ public class IsomorphlyEngine {
 
 	boolean initialized;
 
-	public IsomorphlyEngine(String packageNames[]) {
+	public IsomorphlyEngine(String[] packageNames) {
 
 		this.initialized = false;
 
@@ -58,16 +57,6 @@ public class IsomorphlyEngine {
 		}
 	}
 	
-	/*
-	private void scanAnnotatedComponents() {
-		for (String pkgName : this.packageNames) {
-			Reflections reflections = new Reflections(pkgName);
-			
-			//Set<Method> methods = reflection
-		}
-	}
-	*/
-
 	public final List<Class<?>> getIsomorphlyGroups() {
 		return groupAnnotations;
 	}
