@@ -1,27 +1,25 @@
 package isomorphly.reflect.scanners;
 
-import isomorphly.annotations.Group;
-
-import java.util.Set;
-
-import org.reflections.Reflections;
+import isomorphly.IsomorphlyEngine;
 
 public class PackageScanner {
-	private Reflections reflections;
 	
-	private Set<Class<?>> groups;
+	private String[] packageNames;
 	
-	private String packageNames[];
+	private IsomorphlyEngine engine;
 	
-	public PackageScanner(String packageNames[]) {
+	public PackageScanner(IsomorphlyEngine engine, String[] packageNames) {
+		this.engine = engine;
 		this.packageNames = packageNames;
 	}
 	
-	public void scan() {
-		for (String s : packageNames) {
-		    reflections = new Reflections(s);
-		    groups.addAll(reflections.getTypesAnnotatedWith(Group.class));
-		}
+	public String[] getPackagesNames() {
+		return this.packageNames;
 	}
+	
+	public IsomorphlyEngine getEngine() {
+		return this.engine;
+	}
+	
 
 }
