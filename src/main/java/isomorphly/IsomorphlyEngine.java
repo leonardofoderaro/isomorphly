@@ -31,9 +31,9 @@ public class IsomorphlyEngine {
 
 		this.packageNames = packageNames;
 
-		groupAnnotations = new ArrayList<Class<?>>();
+		groupAnnotations = new ArrayList<>();
 
-		componentAnnotations = new ArrayList<Class<?>>();
+		componentAnnotations = new ArrayList<>();
 
 	}
 
