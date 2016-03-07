@@ -21,5 +21,9 @@ public class PackageScanner {
 		return this.engine;
 	}
 	
+	
+	public void foo() {
+		
+	}
 
 }
