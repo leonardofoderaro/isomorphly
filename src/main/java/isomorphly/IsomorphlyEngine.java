@@ -2,8 +2,8 @@ package isomorphly;
 
 import isomorphly.annotations.Component;
 import isomorphly.annotations.Group;
-import isomorphly.reflect.scanners.PackageScanner;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +13,6 @@ import org.reflections.Reflections;
 
 public class IsomorphlyEngine {
 
-	private PackageScanner packageScanner;
-
 	private List<Class<?>> groupAnnotations;
 
 	private List<Class<?>> componentAnnotations;
@@ -23,24 +21,26 @@ public class IsomorphlyEngine {
 
 	boolean initialized;
 
+	private List<Class<?>> clientGroups;
+
 	public IsomorphlyEngine(String[] packageNames) {
 
 		this.initialized = false;
-
-		this.packageScanner = new PackageScanner(this, packageNames);
 
 		this.packageNames = packageNames;
 
 		groupAnnotations = new ArrayList<>();
 
 		componentAnnotations = new ArrayList<>();
+		
+		clientGroups = new ArrayList<>();
 
 	}
 
 	public void init() {
-		this.packageScanner.scan();
-
 		scanAnnotatedElements();
+		
+		scanAnnotatedImplementations();
 
 		this.initialized = true;
 	}
@@ -57,6 +57,19 @@ public class IsomorphlyEngine {
 		}
 	}
 	
+	private void scanAnnotatedImplementations() {
+		for (String pkgName : this.packageNames) {
+			Reflections reflections = new Reflections(pkgName);
+			
+			for (Class<?> groupAnnotation : groupAnnotations) {
+			    @SuppressWarnings("unchecked")
+				Set<Class<?>> annotatedClientGroups = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
+			    clientGroups.addAll(annotatedClientGroups);
+			}
+		}
+		
+	}
+	
 	public final List<Class<?>> getIsomorphlyGroups() {
 		return groupAnnotations;
 	}
@@ -64,13 +77,17 @@ public class IsomorphlyEngine {
 	public final List<Class<?>> getIsomorphlyComponents() {
 		return componentAnnotations;
 	}
+	
+	public final List<Class<?>> getIsomorphlyClientGroups() {
+		return clientGroups;
+	}
 
 	public boolean isInitialized() {
-		return this.initialized &&
-				this.groupAnnotations != null &&
-				this.groupAnnotations.size() > 0 &&
-				this.componentAnnotations != null &&
-				this.componentAnnotations.size() > 0;
+		boolean groupAnnotationIsValid = this.groupAnnotations != null && !this.groupAnnotations.isEmpty();
+		
+		boolean componentAnnotationIsValid = this.componentAnnotations != null && !this.componentAnnotations.isEmpty();
+
+		return this.initialized && groupAnnotationIsValid && componentAnnotationIsValid;
 	}
 
 
