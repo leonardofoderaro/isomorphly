@@ -24,13 +24,11 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
         try {
 			engine.init();
 		} catch (IsomorphlyValidationException e) {
-			assertTrue(true);
+            assertFalse("isInitialized should be False", engine.isInitialized());
 			return;
 		}
         
         assertTrue("It should raise an IsomorphlyValidationException", false);
-        
-        assertFalse("isInitialized should be False", engine.isInitialized());
     }
 
 }
