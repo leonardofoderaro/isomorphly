@@ -32,8 +32,10 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
     }
     
     public void testEmptyAnnotations() {
+    	String[] packageNames = {"test.isomorphly.dummy"};
+    	IsomorphlyEngine emptyAnnotationsEngine = new IsomorphlyEngine(packageNames);
         try {
-			engine.init();
+        	emptyAnnotationsEngine.init();
 		} catch (IsomorphlyValidationException e) {
             assertFalse("isInitialized should be False", engine.isInitialized());
 			return;
