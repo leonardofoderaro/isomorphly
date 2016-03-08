@@ -64,6 +64,7 @@ public class IsomorphlyEngineTest extends TestCase
     	}
 
     	assertTrue(true);
+    	assertTrue("isInitalized should be true", engine.isInitialized());
     }
     
     public void testComponentsScan() throws IsomorphlyValidationException
@@ -82,6 +83,7 @@ public class IsomorphlyEngineTest extends TestCase
     	}
 
     	assertTrue(true);
+    	assertTrue("isInitalized should be true", engine.isInitialized());
     }
     
     public void testPluginsScan() throws IsomorphlyValidationException
@@ -107,6 +109,7 @@ public class IsomorphlyEngineTest extends TestCase
     	}
 
     	assertTrue(engine != null);
+    	assertTrue("isInitalized should be true", engine.isInitialized());
     }
   
     public void functionScanTest() throws IsomorphlyValidationException
@@ -132,6 +135,7 @@ public class IsomorphlyEngineTest extends TestCase
     	}
 
     	assertTrue(engine != null);
+    	assertTrue("isInitalized should be true", engine.isInitialized());
     }
     
 
