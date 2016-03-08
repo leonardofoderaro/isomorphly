@@ -146,6 +146,8 @@ public class IsomorphlyEngineTest extends TestCase
 		}
         
         assertTrue("It should raise an IsomorphlyValidationException", false);
+        
+        assertFalse("isInitialized should be False", invalidEngine.isInitialized());
     }
     
     
