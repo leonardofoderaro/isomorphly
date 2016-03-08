@@ -32,15 +32,19 @@ public class IsomorphlyEngine {
 		groupAnnotations = new ArrayList<>();
 
 		componentAnnotations = new ArrayList<>();
-		
+
 		clientGroups = new ArrayList<>();
 
 	}
 
-	public void init() {
+	public void init() throws IsomorphlyValidationException {
 		scanAnnotatedElements();
-		
+
 		scanAnnotatedImplementations();
+		
+		validateGroupAnnotatedClasses();
+		
+		validateComponentAnnotatedClasses();
 
 		this.initialized = true;
 	}
@@ -56,20 +60,20 @@ public class IsomorphlyEngine {
 			componentAnnotations.addAll(components);
 		}
 	}
-	
+
 	private void scanAnnotatedImplementations() {
 		for (String pkgName : this.packageNames) {
 			Reflections reflections = new Reflections(pkgName);
-			
+
 			for (Class<?> groupAnnotation : groupAnnotations) {
-			    @SuppressWarnings("unchecked")
+				@SuppressWarnings("unchecked")
 				Set<Class<?>> annotatedClientGroups = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
-			    clientGroups.addAll(annotatedClientGroups);
+				clientGroups.addAll(annotatedClientGroups);
 			}
 		}
-		
+
 	}
-	
+
 	public final List<Class<?>> getIsomorphlyGroups() {
 		return groupAnnotations;
 	}
@@ -77,17 +81,46 @@ public class IsomorphlyEngine {
 	public final List<Class<?>> getIsomorphlyComponents() {
 		return componentAnnotations;
 	}
-	
+
 	public final List<Class<?>> getIsomorphlyClientGroups() {
 		return clientGroups;
 	}
 
 	public boolean isInitialized() {
 		boolean groupAnnotationIsValid = this.groupAnnotations != null && !this.groupAnnotations.isEmpty();
-		
+
 		boolean componentAnnotationIsValid = this.componentAnnotations != null && !this.componentAnnotations.isEmpty();
 
 		return this.initialized && groupAnnotationIsValid && componentAnnotationIsValid;
+	}
+
+	private void validateGroupAnnotatedClasses() throws IsomorphlyValidationException {
+		List<Class<?>> groups = this.getIsomorphlyGroups();
+
+		for (Class<?> cls : groups) {
+			if (!cls.isAnnotation()) {
+				throw new IsomorphlyValidationException("@Group Annotation is valid only when applied to another Annotation");
+			}
+
+			if (!cls.isAnnotationPresent(Group.class)) {
+				throw new IsomorphlyValidationException("@Group Annotation not found in type " + cls.getName());
+			}
+		}
+	}
+
+	
+	private void validateComponentAnnotatedClasses() throws IsomorphlyValidationException {
+		List<Class<?>> groups = this.getIsomorphlyComponents();
+
+		for (Class<?> cls : groups) {
+			if (!cls.isAnnotation()) {
+				throw new IsomorphlyValidationException("@Component Annotation is valid only when applied to another Annotation");
+			}
+
+			if (!cls.isAnnotationPresent(Component.class)) {
+				throw new IsomorphlyValidationException("@Component Annotation not found in type " + cls.getName());
+			}
+		}
 	}
 
 
