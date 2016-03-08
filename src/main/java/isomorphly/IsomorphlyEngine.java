@@ -45,6 +45,11 @@ public class IsomorphlyEngine {
 		validateGroupAnnotatedClasses();
 		
 		validateComponentAnnotatedClasses();
+		
+		if (this.getIsomorphlyClientGroups().isEmpty()) {
+			throw new IsomorphlyValidationException("Group emtpy!");
+		}
+
 
 		this.initialized = true;
 	}
