@@ -32,7 +32,7 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
     }
     
     public void testEmptyAnnotations() {
-    	String[] packageNames = {"test.isomorphly.dummy"};
+    	String[] packageNames = {"test.isomorphly.dummy.empty"};
     	IsomorphlyEngine emptyAnnotationsEngine = new IsomorphlyEngine(packageNames);
         try {
         	emptyAnnotationsEngine.init();
