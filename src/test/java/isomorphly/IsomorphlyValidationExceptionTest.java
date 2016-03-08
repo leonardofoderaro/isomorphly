@@ -10,7 +10,7 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
 	
     public static Test suite()
     {
-        return new TestSuite( IsomorphlyValidationException.class );
+        return new TestSuite( IsomorphlyValidationExceptionTest.class );
     }
 	
     public IsomorphlyValidationExceptionTest( String testName )
