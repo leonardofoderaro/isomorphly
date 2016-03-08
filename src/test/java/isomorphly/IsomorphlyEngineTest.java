@@ -134,6 +134,20 @@ public class IsomorphlyEngineTest extends TestCase
     	assertTrue(engine != null);
     }
     
+    public void testValidationException() {
+        String packageNames[] = {"test.isomorphly.dummy.invalid.annotations"};
+        IsomorphlyEngine invalidEngine = new IsomorphlyEngine(packageNames);	
+        
+        try {
+			invalidEngine.init();
+		} catch (IsomorphlyValidationException e) {
+			assertTrue(true);
+			return;
+		}
+        
+        assertTrue("It should raise an IsomorphlyValidationException", false);
+    }
+    
     
     
 }
