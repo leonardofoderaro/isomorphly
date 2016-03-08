@@ -6,7 +6,6 @@ import isomorphly.annotations.Group;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import test.isomorphly.dummy.annotations.Plugin;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -43,14 +42,15 @@ public class IsomorphlyEngineTest extends TestCase
         assertTrue( engine != null );
     }
     
-    public void testEngineInit() {
+    public void testEngineInit() throws IsomorphlyValidationException {
         engine.init();
+
         assertTrue("engine not properly initialized.", engine.isInitialized());
     }
 
-    public void testGroupScan()
+    public void testGroupScan() throws IsomorphlyValidationException
     {
-    	engine.init();
+		engine.init();
     	
     	List<Class<?>> groups = engine.getIsomorphlyGroups();
     	
@@ -66,9 +66,9 @@ public class IsomorphlyEngineTest extends TestCase
     	assertTrue(true);
     }
     
-    public void testComponentsScan()
+    public void testComponentsScan() throws IsomorphlyValidationException
     {
-    	engine.init();
+		engine.init();
     	
     	List<Class<?>> components = engine.getIsomorphlyComponents();
     	
@@ -84,9 +84,34 @@ public class IsomorphlyEngineTest extends TestCase
     	assertTrue(true);
     }
     
-    public void testPluginsScan()
+    public void testPluginsScan() throws IsomorphlyValidationException
     {
-    	engine.init();
+		engine.init();
+    	
+    	List<Class<?>> annotatedClientGroups = engine.getIsomorphlyClientGroups();
+
+    	assertFalse("AnnotatedClientGroups should not be empty. Is engine's initialization ok?", annotatedClientGroups.isEmpty());
+    
+    	for (Class<?> cls : annotatedClientGroups) {
+    		assertFalse("AnnotatedClient classes cannot be Interfaces", cls.isInterface());
+    		assertFalse("AnnotatedClient classes cannot be Annotations", cls.isAnnotation());
+    		
+    		boolean foundValidParentGroupAnnotation = false;
+    		
+    		for (Annotation a : cls.getAnnotations()) {
+    			foundValidParentGroupAnnotation |= a.annotationType().isAnnotationPresent(Group.class);
+    		} 
+    		
+    		assertTrue("Unable to find a valid @Group Annotation in " + cls.getName(), foundValidParentGroupAnnotation);
+    		
+    	}
+
+    	assertTrue(engine != null);
+    }
+  
+    public void functionScanTest() throws IsomorphlyValidationException
+    {
+		engine.init();
     	
     	List<Class<?>> annotatedClientGroups = engine.getIsomorphlyClientGroups();
 
