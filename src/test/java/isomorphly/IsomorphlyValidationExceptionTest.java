@@ -31,7 +31,7 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
         assertTrue("It should raise an IsomorphlyValidationException", false);
     }
     
-    public void testEmptyAnnotations() {
+    public void testEmptyAnnotations() throws Exception {
     	String[] packageNames = {"test.isomorphly.dummy.empty"};
     	IsomorphlyEngine emptyAnnotationsEngine = new IsomorphlyEngine(packageNames);
         try {
@@ -41,7 +41,7 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
 			return;
 		}
         
-        assertTrue("It should raise an IsomorphlyValidationException", false);
+        throw new Exception("It should raise an IsomorphlyValidationException");
     }
 
 }

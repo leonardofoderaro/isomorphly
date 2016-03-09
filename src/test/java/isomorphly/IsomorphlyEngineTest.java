@@ -82,7 +82,6 @@ public class IsomorphlyEngineTest extends TestCase
     		assertTrue(cls.isAnnotationPresent(Component.class));
     	}
 
-    	assertTrue(true);
     	assertTrue("isInitalized should be true", engine.isInitialized());
     }
     
