@@ -19,7 +19,7 @@ public class IsomorphlyEngine {
 
 	private String[] packageNames;
 
-	boolean initialized;
+	private boolean initialized;
 
 	private List<Class<?>> clientGroups;
 
