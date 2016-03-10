@@ -43,5 +43,31 @@ public class IsomorphlyValidationExceptionTest extends TestCase {
         
         throw new Exception("It should raise an IsomorphlyValidationException");
     }
+    
+    public void testMissingAnnotations()
+    {
+        String packageNames[] = {"test.isomorphly.invalid.one.annotations"};
+        engine = new IsomorphlyEngine(packageNames);	
+        try {
+			engine.init();
+		} catch (IsomorphlyValidationException e) {
+			assertFalse("it should be false", engine.isInitialized());
+			return;
+		}
+        assertTrue("it should have raise an exception", false);
+    }
+    
+    public void testMissingAnnotations2()
+    {
+        String packageNames[] = {"test.isomorphly.invalid.two"};
+        engine = new IsomorphlyEngine(packageNames);	
+        try {
+			engine.init();
+		} catch (IsomorphlyValidationException e) {
+			assertFalse("it should be false", engine.isInitialized());
+			return;
+		}
+        assertTrue("it should have raise an exception", false);
+    }
 
 }
