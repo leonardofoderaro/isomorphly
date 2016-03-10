@@ -1,7 +1,6 @@
 package isomorphly;
 
-import isomorphly.annotations.Component;
-import isomorphly.annotations.Group;
+import isomorphly.reflect.scanners.PackageScanner;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -13,99 +12,91 @@ import org.reflections.Reflections;
 
 public class IsomorphlyEngine {
 
-	private List<Class<?>> groupAnnotations;
+  private List<Class<?>> groupAnnotations;
 
-	private List<Class<?>> componentAnnotations;
+  private List<Class<?>> componentAnnotations;
 
-	private String[] packageNames;
+  private String[] packageNames;
 
-	private boolean initialized;
+  private boolean initialized;
 
-	private List<Class<?>> clientGroups;
+  private List<Class<?>> clientGroups;
 
-	public IsomorphlyEngine(String[] packageNames) {
+  private PackageScanner packageScanner;
 
-		this.initialized = false;
+  public IsomorphlyEngine(String[] packageNames) {
 
-		this.packageNames = packageNames;
+    this.initialized = false;
 
-		groupAnnotations = new ArrayList<>();
+    this.packageNames = packageNames;
 
-		componentAnnotations = new ArrayList<>();
+    groupAnnotations = new ArrayList<>();
 
-		clientGroups = new ArrayList<>();
+    componentAnnotations = new ArrayList<>();
 
-	}
+    clientGroups = new ArrayList<>();
 
-	public void init() throws IsomorphlyValidationException {
-		scanAnnotatedElements();
+  }
 
-		scanAnnotatedImplementations();
-		
-		if (this.getIsomorphlyClientGroups().isEmpty()) {
-			throw new IsomorphlyValidationException("Group emtpy!");
-		}
+  public void init() throws IsomorphlyValidationException {
 
+    this.packageScanner = new PackageScanner(this.packageNames);
 
-		this.initialized = true;
-	}
+    scanAnnotatedElements();
 
-	private void scanAnnotatedElements() throws IsomorphlyValidationException {
-		for (String pkgName : this.packageNames) {
-			Reflections reflections = new Reflections(pkgName);
+    scanAnnotatedImplementations();
 
-			Set<Class<?>> groups = reflections.getTypesAnnotatedWith(Group.class);
-			for (Class<?> c : groups) {
-				if (c.isAnnotation()) {
-			        groupAnnotations.add(c);
-				} else {
-					throw new IsomorphlyValidationException("@Group Annotation can be used only on Annotations.");
-				}
-			}
+    boolean groupAnnotationIsValid = !this.groupAnnotations.isEmpty();
 
-			Set<Class<?>> components = reflections.getTypesAnnotatedWith(Component.class);
-			for (Class<?> c : components) {
-			    if (c.isAnnotation()) {
-			        componentAnnotations.add(c);	
-			    } else {
-					throw new IsomorphlyValidationException("@Group Annotation can be used only on Annotations.");
-			    }
-			}
-		}
-	}
+    boolean componentAnnotationIsValid = !this.componentAnnotations.isEmpty();
 
-	private void scanAnnotatedImplementations() {
-		for (String pkgName : this.packageNames) {
-			Reflections reflections = new Reflections(pkgName);
+    this.initialized = groupAnnotationIsValid && componentAnnotationIsValid;
 
-			for (Class<?> groupAnnotation : groupAnnotations) {
-				@SuppressWarnings("unchecked")
-				Set<Class<?>> annotatedClientGroups = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
-				clientGroups.addAll(annotatedClientGroups);
-			}
-		}
+    if (!groupAnnotationIsValid) {
+      throw new IsomorphlyValidationException("no valid @Group Annotations found.");
+    }
 
-	}
+    if (!componentAnnotationIsValid) {
+      throw new IsomorphlyValidationException("no valid @Component Annotations found.");
+    }
 
-	public final List<Class<?>> getIsomorphlyGroups() {
-		return groupAnnotations;
-	}
+  }
 
-	public final List<Class<?>> getIsomorphlyComponents() {
-		return componentAnnotations;
-	}
+  private void scanAnnotatedElements() throws IsomorphlyValidationException {
 
-	public final List<Class<?>> getIsomorphlyClientGroups() {
-		return clientGroups;
-	}
+    this.groupAnnotations.addAll(this.packageScanner.getGroupDefinitions());
 
-	public boolean isInitialized() {
-		boolean groupAnnotationIsValid = this.groupAnnotations != null && !this.groupAnnotations.isEmpty();
+    this.componentAnnotations.addAll(this.packageScanner.getComponentsDefinitions());
+  }
 
-		boolean componentAnnotationIsValid = this.componentAnnotations != null && !this.componentAnnotations.isEmpty();
+  private void scanAnnotatedImplementations() {
+    for (String pkgName : this.packageNames) {
+      Reflections reflections = new Reflections(pkgName);
 
-		return this.initialized && groupAnnotationIsValid && componentAnnotationIsValid;
-	}
+      for (Class<?> groupAnnotation : groupAnnotations) {
+        @SuppressWarnings("unchecked")
+        Set<Class<?>> annotatedClientGroups = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
+        clientGroups.addAll(annotatedClientGroups);
+      }
+    }
+
+  }
+
+  public final List<Class<?>> getIsomorphlyGroups() {
+    return groupAnnotations;
+  }
+
+  public final List<Class<?>> getIsomorphlyComponents() {
+    return componentAnnotations;
+  }
+
+  public final List<Class<?>> getIsomorphlyClientGroups() {
+    return clientGroups;
+  }
+
+  public boolean isInitialized() {
+    return this.initialized;
+  }
 
 
 }
