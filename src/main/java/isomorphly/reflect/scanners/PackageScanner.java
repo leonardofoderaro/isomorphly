@@ -86,7 +86,7 @@ public class PackageScanner {
         if (c.isAnnotation()) {
           methodCallContexts.add(c);
         } else {
-          throw new IsomorphlyValidationException("@Group Annotation can be used only on Annotations.");
+          throw new IsomorphlyValidationException("@CallContext Annotation can be used only on Annotations.");
         }
       }
 
