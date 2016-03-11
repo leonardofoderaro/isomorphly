@@ -24,6 +24,8 @@ public class IsomorphlyEngine {
 
   private PackageScanner packageScanner;
 
+  private List<Class<?>> methodCallContexts;
+
   public IsomorphlyEngine(String[] packageNames) {
 
     this.initialized = false;
@@ -33,6 +35,8 @@ public class IsomorphlyEngine {
     groupAnnotations = new ArrayList<>();
 
     componentAnnotations = new ArrayList<>();
+    
+    methodCallContexts = new ArrayList<>();
 
     clientGroups = new ArrayList<>();
 
@@ -67,6 +71,8 @@ public class IsomorphlyEngine {
     this.groupAnnotations.addAll(this.packageScanner.getGroupDefinitions());
 
     this.componentAnnotations.addAll(this.packageScanner.getComponentsDefinitions());
+
+    this.methodCallContexts.addAll(this.packageScanner.getMethodCallContexts());
   }
 
   private void scanAnnotatedImplementations() {
