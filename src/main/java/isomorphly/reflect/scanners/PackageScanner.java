@@ -118,8 +118,10 @@ public class PackageScanner {
     }
 
     for (Class<?> cls : tmpPlugins) {
-      if (!cls.isInterface() && !cls.isAnnotation()) {
-        pluginClasses.add(cls);
+      if (!cls.isInterface()) {
+        if (!cls.isAnnotation()) {
+          pluginClasses.add(cls);
+        }
       } else {
         throw new IsomorphlyValidationException("Plugins must be implemented in classes.");
       }
@@ -139,7 +141,7 @@ public class PackageScanner {
   public Set<Class<?>> getMethodCallContexts() {
     return this.methodCallContexts;
   }
-  
+
   public Set<Class<?>> getPluginsDefinitions() {
     return this.pluginClasses;
   }
