@@ -1,6 +1,6 @@
 package test.isomorphly.invalid.six.annotations;
 
 @Plugin
-@interface InvalidPlugin {
+public @interface InvalidPlugin {
 
 }
