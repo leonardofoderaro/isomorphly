@@ -5,6 +5,7 @@ import isomorphly.annotations.CallContext;
 import isomorphly.annotations.Component;
 import isomorphly.annotations.Group;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,8 +18,10 @@ public class PackageScanner {
   private Set<Class<?>> groups;
 
   private Set<Class<?>> components;
-  
+
   private Set<Class<?>> methodCallContexts;
+
+  private Set<Class<?>> pluginClasses;
 
   public PackageScanner(String[] packageNames) throws IsomorphlyValidationException {
     this.packageNames = packageNames;
@@ -26,23 +29,29 @@ public class PackageScanner {
     this.groups = new HashSet<>();
 
     this.components = new HashSet<>();
-    
+
     this.methodCallContexts = new HashSet<>();
+
+    this.pluginClasses = new HashSet<>();
 
     loadGroupsDefinitions();
 
     loadComponentsDefinitions();
-    
+
     loadMethodCallContexts();
+
+    loadPluginsImplementations();
   }
 
   private void loadGroupsDefinitions() throws IsomorphlyValidationException {
+
 
     for (String pkgName : packageNames) {
 
       Reflections reflections = new Reflections(pkgName);
 
       Set<Class<?>> foundGroups = reflections.getTypesAnnotatedWith(Group.class);
+
       for (Class<?> c : foundGroups) {
         if (c.isAnnotation()) {
           groups.add(c);
@@ -74,7 +83,7 @@ public class PackageScanner {
     }
 
   }
-  
+
   private void loadMethodCallContexts() throws IsomorphlyValidationException {
 
     for (String pkgName : packageNames) {
@@ -94,6 +103,33 @@ public class PackageScanner {
 
   }
 
+  private void loadPluginsImplementations() throws IsomorphlyValidationException {
+
+    HashSet<Class<?>> tmpPlugins = new HashSet<>();
+
+    for (String pkgName : this.packageNames) {
+      Reflections reflections = new Reflections(pkgName);
+
+      for (Class<?> groupAnnotation : this.groups) {
+        @SuppressWarnings("unchecked")
+        Set<Class<?>> foundPluginClasses = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
+        tmpPlugins.addAll(foundPluginClasses);
+      }
+    }
+
+    for (Class<?> cls : tmpPlugins) {
+      if (!cls.isInterface()) {
+        if (!cls.isAnnotation()) {
+          pluginClasses.add(cls);
+        }
+      } else {
+        throw new IsomorphlyValidationException("Plugins must be implemented in classes.");
+      }
+    }
+
+
+  }
+
   public Set<Class<?>> getGroupDefinitions() {
     return this.groups;
   }
@@ -104,6 +140,10 @@ public class PackageScanner {
 
   public Set<Class<?>> getMethodCallContexts() {
     return this.methodCallContexts;
+  }
+
+  public Set<Class<?>> getPluginsDefinitions() {
+    return this.pluginClasses;
   }
 
 }

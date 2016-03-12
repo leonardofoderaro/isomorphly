@@ -89,9 +89,9 @@ public class IsomorphlyEngineTest extends TestCase
     {
 		engine.init();
     	
-    	List<Class<?>> annotatedClientGroups = engine.getIsomorphlyClientGroups();
+    	List<Class<?>> annotatedClientGroups = engine.getIsomorphlyPluginsDefinitions();
 
-    	assertFalse("AnnotatedClientGroups should not be empty. Is engine's initialization ok?", annotatedClientGroups.isEmpty());
+    	assertFalse("annotated plugins definitions should not be empty. Is engine's initialization ok?", annotatedClientGroups.isEmpty());
     
     	for (Class<?> cls : annotatedClientGroups) {
     		assertFalse("AnnotatedClient classes cannot be Interfaces", cls.isInterface());
@@ -115,7 +115,7 @@ public class IsomorphlyEngineTest extends TestCase
     {
 		engine.init();
     	
-    	List<Class<?>> annotatedClientGroups = engine.getIsomorphlyClientGroups();
+    	List<Class<?>> annotatedClientGroups = engine.getIsomorphlyPluginsDefinitions();
 
     	assertFalse("AnnotatedClientGroups should not be empty. Is engine's initialization ok?", annotatedClientGroups.isEmpty());
     
@@ -135,6 +135,41 @@ public class IsomorphlyEngineTest extends TestCase
 
     	assertTrue(engine != null);
     	assertTrue("isInitalized should be true", engine.isInitialized());
+    }
+
+    public void testInvalidPluginAnnotatedElement() {
+      IsomorphlyEngine engine;
+
+      String packageNames[] = {"test.isomorphly.invalid.five.annotations"};
+
+      engine = new IsomorphlyEngine(packageNames);        
+
+      try {
+        engine.init();
+      } catch (IsomorphlyValidationException e) {
+        assertFalse("isInitialized should be False", engine.isInitialized());
+        return;
+      }
+
+      assertTrue("It should raise an IsomorphlyValidationException", false);
+    }
+    
+
+    public void testInvalidPluginAnnotatedElements2() {
+      IsomorphlyEngine engine;
+
+      String packageNames[] = {"test.isomorphly.invalid.six.annotations"};
+
+      engine = new IsomorphlyEngine(packageNames);        
+
+      try {
+        engine.init();
+      } catch (IsomorphlyValidationException e) {
+        assertFalse("isInitialized should be False", engine.isInitialized());
+        return;
+      }
+
+      assertTrue("It should raise an IsomorphlyValidationException", false);
     }
     
 
