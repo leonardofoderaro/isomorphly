@@ -20,11 +20,11 @@ public class IsomorphlyEngine {
 
   private boolean initialized;
 
-  private List<Class<?>> clientGroups;
-
   private PackageScanner packageScanner;
 
   private List<Class<?>> methodCallContexts;
+
+  private List<Class<?>> pluginsDefinitions;
 
   public IsomorphlyEngine(String[] packageNames) {
 
@@ -38,7 +38,7 @@ public class IsomorphlyEngine {
     
     methodCallContexts = new ArrayList<>();
 
-    clientGroups = new ArrayList<>();
+    pluginsDefinitions = new ArrayList<>();
 
   }
 
@@ -47,8 +47,6 @@ public class IsomorphlyEngine {
     this.packageScanner = new PackageScanner(this.packageNames);
 
     scanAnnotatedElements();
-
-    scanAnnotatedImplementations();
 
     boolean groupAnnotationIsValid = !this.groupAnnotations.isEmpty();
 
@@ -73,20 +71,11 @@ public class IsomorphlyEngine {
     this.componentAnnotations.addAll(this.packageScanner.getComponentsDefinitions());
 
     this.methodCallContexts.addAll(this.packageScanner.getMethodCallContexts());
+    
+    this.pluginsDefinitions.addAll(this.packageScanner.getPluginsDefinitions());
   }
 
-  private void scanAnnotatedImplementations() {
-    for (String pkgName : this.packageNames) {
-      Reflections reflections = new Reflections(pkgName);
 
-      for (Class<?> groupAnnotation : groupAnnotations) {
-        @SuppressWarnings("unchecked")
-        Set<Class<?>> annotatedClientGroups = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
-        clientGroups.addAll(annotatedClientGroups);
-      }
-    }
-
-  }
 
   public final List<Class<?>> getIsomorphlyGroups() {
     return groupAnnotations;
@@ -96,8 +85,8 @@ public class IsomorphlyEngine {
     return componentAnnotations;
   }
 
-  public final List<Class<?>> getIsomorphlyClientGroups() {
-    return clientGroups;
+  public final List<Class<?>> getIsomorphlyPluginsDefinitions() {
+    return pluginsDefinitions;
   }
 
   public boolean isInitialized() {
