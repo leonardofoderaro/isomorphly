@@ -140,7 +140,7 @@ public class IsomorphlyEngineTest extends TestCase
     public void testInvalidPluginAnnotatedElement() {
       IsomorphlyEngine engine;
 
-      String packageNames[] = {"test.isomorphly.dummy.invalid.five.annotations"};
+      String packageNames[] = {"test.isomorphly.invalid.five.annotations"};
 
       engine = new IsomorphlyEngine(packageNames);        
 
@@ -155,10 +155,10 @@ public class IsomorphlyEngineTest extends TestCase
     }
     
 
-    public void testInvalidPluginAnnotatedElementi2() {
+    public void testInvalidPluginAnnotatedElements2() {
       IsomorphlyEngine engine;
 
-      String packageNames[] = {"test.isomorphly.dummy.invalid.six.annotations"};
+      String packageNames[] = {"test.isomorphly.invalid.six.annotations"};
 
       engine = new IsomorphlyEngine(packageNames);        
 
