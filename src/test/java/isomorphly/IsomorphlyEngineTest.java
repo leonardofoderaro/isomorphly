@@ -155,6 +155,24 @@ public class IsomorphlyEngineTest extends TestCase
     }
     
 
+    public void testInvalidPluginAnnotatedElementi2() {
+      IsomorphlyEngine engine;
+
+      String packageNames[] = {"test.isomorphly.dummy.invalid.six.annotations"};
+
+      engine = new IsomorphlyEngine(packageNames);        
+
+      try {
+        engine.init();
+      } catch (IsomorphlyValidationException e) {
+        assertFalse("isInitialized should be False", engine.isInitialized());
+        return;
+      }
+
+      assertTrue("It should raise an IsomorphlyValidationException", false);
+    }
+    
+
     
     
     
