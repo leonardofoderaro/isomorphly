@@ -3,7 +3,7 @@ package isomorphly.reflect.scanners;
 import isomorphly.IsomorphlyValidationException;
 import isomorphly.annotations.CallContext;
 import isomorphly.annotations.Component;
-import isomorphly.annotations.Group;
+import isomorphly.annotations.IsomorphlyPlugin;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ public class PackageScanner {
 
   private String[] packageNames;
 
-  private Set<Class<?>> groups;
+  private Set<Class<?>> isomorphlyPlugins;
 
   private Set<Class<?>> components;
 
@@ -26,7 +26,7 @@ public class PackageScanner {
   public PackageScanner(String[] packageNames) throws IsomorphlyValidationException {
     this.packageNames = packageNames;
 
-    this.groups = new HashSet<>();
+    this.isomorphlyPlugins = new HashSet<>();
 
     this.components = new HashSet<>();
 
@@ -34,7 +34,7 @@ public class PackageScanner {
 
     this.pluginClasses = new HashSet<>();
 
-    loadGroupsDefinitions();
+    loadIsomorphlyPluginElements();
 
     loadComponentsDefinitions();
 
@@ -43,20 +43,20 @@ public class PackageScanner {
     loadPluginsImplementations();
   }
 
-  private void loadGroupsDefinitions() throws IsomorphlyValidationException {
+  private void loadIsomorphlyPluginElements() throws IsomorphlyValidationException {
 
 
     for (String pkgName : packageNames) {
 
       Reflections reflections = new Reflections(pkgName);
 
-      Set<Class<?>> foundGroups = reflections.getTypesAnnotatedWith(Group.class);
+      Set<Class<?>> foundPlugins = reflections.getTypesAnnotatedWith(IsomorphlyPlugin.class);
 
-      for (Class<?> c : foundGroups) {
+      for (Class<?> c : foundPlugins) {
         if (c.isAnnotation()) {
-          groups.add(c);
+          isomorphlyPlugins.add(c);
         } else {
-          throw new IsomorphlyValidationException("@Group Annotation can be used only on Annotations.");
+          throw new IsomorphlyValidationException("@IsomorphlyPlugin Annotation can be used only on Annotations.");
         }
       }
 
@@ -110,7 +110,7 @@ public class PackageScanner {
     for (String pkgName : this.packageNames) {
       Reflections reflections = new Reflections(pkgName);
 
-      for (Class<?> groupAnnotation : this.groups) {
+      for (Class<?> groupAnnotation : this.isomorphlyPlugins) {
         @SuppressWarnings("unchecked")
         Set<Class<?>> foundPluginClasses = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
         tmpPlugins.addAll(foundPluginClasses);
@@ -130,8 +130,8 @@ public class PackageScanner {
 
   }
 
-  public Set<Class<?>> getGroupDefinitions() {
-    return this.groups;
+  public Set<Class<?>> getIsomorphlyPlugins() {
+    return this.isomorphlyPlugins;
   }
 
   public Set<Class<?>> getComponentsDefinitions() {

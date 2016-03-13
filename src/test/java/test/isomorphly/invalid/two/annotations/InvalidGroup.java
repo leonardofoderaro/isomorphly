@@ -1,8 +1,8 @@
 package test.isomorphly.invalid.two.annotations;
 
-import isomorphly.annotations.Group;
+import isomorphly.annotations.IsomorphlyPlugin;
 
-@Group
+@IsomorphlyPlugin
 public @interface InvalidGroup {
 
 }

@@ -1,8 +1,8 @@
 package test.isomorphly.dummy.invalid.annotations;
 
-import isomorphly.annotations.Group;
+import isomorphly.annotations.IsomorphlyPlugin;
 
-@Group
+@IsomorphlyPlugin
 public class InvalidGroup {
 
 }

@@ -1,7 +1,7 @@
 package isomorphly;
 
 import isomorphly.annotations.Component;
-import isomorphly.annotations.Group;
+import isomorphly.annotations.IsomorphlyPlugin;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -52,7 +52,7 @@ public class IsomorphlyEngineTest extends TestCase
     {
 		engine.init();
     	
-    	List<Class<?>> groups = engine.getIsomorphlyGroups();
+    	List<Class<?>> groups = engine.getIsomorphlyPluginAnnotatedElements();
     	
     	assertNotNull("Groups should not null. Is engine's initialization ok?", groups);
 
@@ -60,7 +60,7 @@ public class IsomorphlyEngineTest extends TestCase
     	
     	for (Class<?> cls : groups) {
     		assertTrue(cls.isAnnotation());
-    		assertTrue(cls.isAnnotationPresent(Group.class));
+    		assertTrue(cls.isAnnotationPresent(IsomorphlyPlugin.class));
     	}
 
     	assertTrue(true);
@@ -100,7 +100,7 @@ public class IsomorphlyEngineTest extends TestCase
     		boolean foundValidParentGroupAnnotation = false;
     		
     		for (Annotation a : cls.getAnnotations()) {
-    			foundValidParentGroupAnnotation |= a.annotationType().isAnnotationPresent(Group.class);
+    			foundValidParentGroupAnnotation |= a.annotationType().isAnnotationPresent(IsomorphlyPlugin.class);
     		} 
     		
     		assertTrue("Unable to find a valid @Group Annotation in " + cls.getName(), foundValidParentGroupAnnotation);
@@ -126,7 +126,7 @@ public class IsomorphlyEngineTest extends TestCase
     		boolean foundValidParentGroupAnnotation = false;
     		
     		for (Annotation a : cls.getAnnotations()) {
-    			foundValidParentGroupAnnotation |= a.annotationType().isAnnotationPresent(Group.class);
+    			foundValidParentGroupAnnotation |= a.annotationType().isAnnotationPresent(IsomorphlyPlugin.class);
     		} 
     		
     		assertTrue("Unable to find a valid @Group Annotation in " + cls.getName(), foundValidParentGroupAnnotation);
