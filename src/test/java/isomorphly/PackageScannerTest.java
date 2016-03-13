@@ -1,11 +1,5 @@
 package isomorphly;
 
-import isomorphly.annotations.Component;
-import isomorphly.annotations.Group;
-
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

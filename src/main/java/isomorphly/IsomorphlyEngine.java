@@ -2,17 +2,14 @@ package isomorphly;
 
 import isomorphly.reflect.scanners.PackageScanner;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import org.reflections.Reflections;
 
 
 public class IsomorphlyEngine {
 
-  private List<Class<?>> groupAnnotations;
+  // elements annotated with IsomorphlyPlugin
+  private List<Class<?>> isomorphlyPluginAnnotatedElements;
 
   private List<Class<?>> componentAnnotations;
 
@@ -32,10 +29,10 @@ public class IsomorphlyEngine {
 
     this.packageNames = packageNames;
 
-    groupAnnotations = new ArrayList<>();
+    isomorphlyPluginAnnotatedElements = new ArrayList<>();
 
     componentAnnotations = new ArrayList<>();
-    
+
     methodCallContexts = new ArrayList<>();
 
     pluginsDefinitions = new ArrayList<>();
@@ -48,13 +45,13 @@ public class IsomorphlyEngine {
 
     scanAnnotatedElements();
 
-    boolean groupAnnotationIsValid = !this.groupAnnotations.isEmpty();
+    boolean isomorphlyPluginsIsValid = !this.isomorphlyPluginAnnotatedElements.isEmpty();
 
     boolean componentAnnotationIsValid = !this.componentAnnotations.isEmpty();
 
-    this.initialized = groupAnnotationIsValid && componentAnnotationIsValid;
+    this.initialized = isomorphlyPluginsIsValid && componentAnnotationIsValid;
 
-    if (!groupAnnotationIsValid) {
+    if (!isomorphlyPluginsIsValid) {
       throw new IsomorphlyValidationException("no valid @Group Annotations found.");
     }
 
@@ -66,19 +63,19 @@ public class IsomorphlyEngine {
 
   private void scanAnnotatedElements() throws IsomorphlyValidationException {
 
-    this.groupAnnotations.addAll(this.packageScanner.getGroupDefinitions());
+    this.isomorphlyPluginAnnotatedElements.addAll(this.packageScanner.getIsomorphlyPlugins());
 
     this.componentAnnotations.addAll(this.packageScanner.getComponentsDefinitions());
 
     this.methodCallContexts.addAll(this.packageScanner.getMethodCallContexts());
-    
+
     this.pluginsDefinitions.addAll(this.packageScanner.getPluginsDefinitions());
   }
 
 
 
-  public final List<Class<?>> getIsomorphlyGroups() {
-    return groupAnnotations;
+  public final List<Class<?>> getIsomorphlyPluginAnnotatedElements() {
+    return isomorphlyPluginAnnotatedElements;
   }
 
   public final List<Class<?>> getIsomorphlyComponents() {
