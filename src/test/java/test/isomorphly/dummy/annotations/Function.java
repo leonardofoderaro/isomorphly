@@ -5,8 +5,8 @@ import java.lang.annotation.RetentionPolicy;
 
 import isomorphly.annotations.Component;
 
-@Retention(RetentionPolicy.RUNTIME)
 @Component
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Function {
 
 }
