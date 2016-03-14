@@ -1,5 +1,6 @@
 package isomorphly;
 
+import isomorphly.reflect.IsomorphlyRegistry;
 import isomorphly.reflect.scanners.PackageScanner;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class IsomorphlyEngine {
   private boolean initialized;
 
   private PackageScanner packageScanner;
+  
+  private IsomorphlyRegistry registry;
 
   private List<Class<?>> methodCallContexts;
 
@@ -36,6 +39,8 @@ public class IsomorphlyEngine {
     methodCallContexts = new ArrayList<>();
 
     pluginsDefinitions = new ArrayList<>();
+    
+    registry = new IsomorphlyRegistry();
 
   }
 
