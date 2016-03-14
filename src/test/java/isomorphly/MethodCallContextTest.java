@@ -41,6 +41,8 @@ public class MethodCallContextTest extends TestCase {
     engine = new IsomorphlyEngine(packageNames);        
 
     engine.init();
+    
+    assertTrue("it should be true", engine.isInitialized());
 
   }
 

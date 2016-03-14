@@ -7,7 +7,7 @@ import test.isomorphly.dummy.annotations.Plugin;
 public class HelloWorldPlugin {
 
 	@Function
-	private void hello(MethodContextObject obj) {
+	public void hello(MethodContextObject obj) {
 		System.out.println("hello! - " + obj.n);
 	}
 }
