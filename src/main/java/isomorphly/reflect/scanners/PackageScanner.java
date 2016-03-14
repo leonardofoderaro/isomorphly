@@ -6,7 +6,11 @@ import isomorphly.annotations.Component;
 import isomorphly.annotations.IsomorphlyPlugin;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.reflections.Reflections;
@@ -23,6 +27,10 @@ public class PackageScanner {
 
   private Set<Class<?>> pluginClasses;
 
+  // TODO explain better
+  // key: classname, value: list of methods
+  private Map<String, Map<String, Method>> validMethodsMap;
+
   public PackageScanner(String[] packageNames) throws IsomorphlyValidationException {
     this.packageNames = packageNames;
 
@@ -34,14 +42,25 @@ public class PackageScanner {
 
     this.pluginClasses = new HashSet<>();
 
+    this.validMethodsMap = new HashMap<>();
+
+    // step 1 - annotations used to identify plugins in the guest environment
     loadIsomorphlyPluginElements();
 
+    // step 2 - annotations used to identify functions in the guest environment 
     loadComponentsDefinitions();
 
+    // step 3 - classes encapsulating all the guest-specific plugin execution parameters
     loadMethodCallContexts();
 
+    // step 4 - classes in the guest-space annotated with annotations defined at step 1
     loadPluginsImplementations();
+
+    /* step 5 - methods in the guest-space belongings to classes identified at step 4
+       annotated with the annotations defined at step 2 */
+    loadAnnotatedMethods();
   }
+
 
   private void loadIsomorphlyPluginElements() throws IsomorphlyValidationException {
 
@@ -126,8 +145,61 @@ public class PackageScanner {
         throw new IsomorphlyValidationException("Plugins must be implemented in classes.");
       }
     }
+  }
 
 
+  private void loadAnnotatedMethods() throws IsomorphlyValidationException {
+
+    Map<String, Method> tmpMethodsMap = null;
+    for (Class<?> c : this.pluginClasses) {
+      // TODO add a cache to avoid rescanning same un-annotated methods for every class (e.g. methods from Object class)
+      tmpMethodsMap = this.validMethodsMap.get(c.getName());
+
+      if (tmpMethodsMap == null) {
+        tmpMethodsMap = new HashMap<String, Method>();
+      }
+
+      for (Method m : c.getMethods()) {
+        Annotation[] methodAnnotations = m.getAnnotations();
+        for (Annotation a : methodAnnotations) {
+          // TODO Component annotation must be refactored (as per IsomorphlyPlugin)
+          if (a.annotationType().isAnnotationPresent(Component.class)) {
+            //TODO first method's param MUST be a MethodCallContext object
+            Parameter[] methodParams = m.getParameters();
+
+            if (methodParams.length==0) {
+              throw new IsomorphlyValidationException("annotated methods must accept at least 1 parameter of type callcontext");
+            }
+            
+            Class<?> firstParamType = methodParams[0].getType();
+            
+            Annotation[] firstParamTypeAnnotations = firstParamType.getAnnotations();
+            
+            if (firstParamTypeAnnotations.length == 0) {
+              throw new IsomorphlyValidationException("the first parameter of an annotated method must be of a type annotate with CallContext annotation.");
+            }
+
+            boolean foundValidParamTypeAnnotation = false;
+            for (Annotation methodAnnotation : firstParamTypeAnnotations) {
+              Class<?> annotationType = methodAnnotation.annotationType();
+              
+              if (annotationType.isAnnotationPresent(CallContext.class)) {
+                foundValidParamTypeAnnotation = true;
+              }
+            }
+            
+            if (!foundValidParamTypeAnnotation) {
+              throw new IsomorphlyValidationException("the first parameter of an annotated method must be of a type annotated with CallContext annotation.");
+            }
+
+            tmpMethodsMap.put(m.getName(), m);
+          }
+        }
+
+      }
+      
+      this.validMethodsMap.put(c.getName(), tmpMethodsMap);
+    }
   }
 
   public Set<Class<?>> getIsomorphlyPlugins() {
