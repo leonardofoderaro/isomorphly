@@ -19,7 +19,7 @@ public class PackageScanner {
 
   private String[] packageNames;
 
-  private Set<Class<?>> isomorphlyPlugins;
+  private Map<String, Class<?>> isomorphlyPlugins;
 
   private Set<Class<?>> components;
 
@@ -34,7 +34,7 @@ public class PackageScanner {
   public PackageScanner(String[] packageNames) throws IsomorphlyValidationException {
     this.packageNames = packageNames;
 
-    this.isomorphlyPlugins = new HashSet<>();
+    this.isomorphlyPlugins = new HashMap<>();
 
     this.components = new HashSet<>();
 
@@ -73,7 +73,7 @@ public class PackageScanner {
 
       for (Class<?> c : foundPlugins) {
         if (c.isAnnotation()) {
-          isomorphlyPlugins.add(c);
+          isomorphlyPlugins.put(c.getName(), c);
         } else {
           throw new IsomorphlyValidationException("@IsomorphlyPlugin Annotation can be used only on Annotations.");
         }
@@ -124,19 +124,22 @@ public class PackageScanner {
 
   private void loadPluginsImplementations() throws IsomorphlyValidationException {
 
-    HashSet<Class<?>> tmpPlugins = new HashSet<>();
+    Map<String, Class<?>> tmpPlugins = new HashMap<>();
 
     for (String pkgName : this.packageNames) {
       Reflections reflections = new Reflections(pkgName);
 
-      for (Class<?> groupAnnotation : this.isomorphlyPlugins) {
+      for (String groupAnnotationKey : this.isomorphlyPlugins.keySet()) {
         @SuppressWarnings("unchecked")
-        Set<Class<?>> foundPluginClasses = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) groupAnnotation);
-        tmpPlugins.addAll(foundPluginClasses);
+        Set<Class<?>> foundPluginClasses = reflections.getTypesAnnotatedWith((Class<? extends Annotation>) this.isomorphlyPlugins.get(groupAnnotationKey));
+        for (Class<?> cls : foundPluginClasses) {
+          tmpPlugins.put(cls.getName(), cls);
+        }
       }
     }
 
-    for (Class<?> cls : tmpPlugins) {
+    for (String k : tmpPlugins.keySet()) {
+      Class<?> cls = tmpPlugins.get(k);
       if (!cls.isInterface()) {
         if (!cls.isAnnotation()) {
           pluginClasses.add(cls);
@@ -202,7 +205,7 @@ public class PackageScanner {
     }
   }
 
-  public Set<Class<?>> getIsomorphlyPlugins() {
+  public Map<String, Class<?>> getIsomorphlyPlugins() {
     return this.isomorphlyPlugins;
   }
 

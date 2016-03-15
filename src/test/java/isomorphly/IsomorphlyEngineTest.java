@@ -5,6 +5,7 @@ import isomorphly.annotations.IsomorphlyPlugin;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -52,13 +53,13 @@ public class IsomorphlyEngineTest extends TestCase
     {
 		engine.init();
     	
-    	List<Class<?>> groups = engine.getIsomorphlyPluginAnnotatedElements();
+    	Map<String, Class<?>> groups = engine.getIsomorphlyPluginAnnotatedElements();
     	
     	assertNotNull("Groups should not null. Is engine's initialization ok?", groups);
 
     	assertFalse("Groups should not be empty. Is engine's initialization ok?", groups.isEmpty());
     	
-    	for (Class<?> cls : groups) {
+    	for (Class<?> cls : groups.values()) {
     		assertTrue(cls.isAnnotation());
     		assertTrue(cls.isAnnotationPresent(IsomorphlyPlugin.class));
     	}

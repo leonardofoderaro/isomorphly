@@ -4,13 +4,15 @@ import isomorphly.reflect.IsomorphlyRegistry;
 import isomorphly.reflect.scanners.PackageScanner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class IsomorphlyEngine {
 
   // elements annotated with IsomorphlyPlugin
-  private List<Class<?>> isomorphlyPluginAnnotatedElements;
+  private Map<String, Class<?>> isomorphlyPluginAnnotatedElements;
 
   private List<Class<?>> componentAnnotations;
 
@@ -32,7 +34,7 @@ public class IsomorphlyEngine {
 
     this.packageNames = packageNames;
 
-    isomorphlyPluginAnnotatedElements = new ArrayList<>();
+    isomorphlyPluginAnnotatedElements = new HashMap<>();
 
     componentAnnotations = new ArrayList<>();
 
@@ -69,7 +71,7 @@ public class IsomorphlyEngine {
 
   private void scanAnnotatedElements() throws IsomorphlyValidationException {
 
-    this.isomorphlyPluginAnnotatedElements.addAll(this.packageScanner.getIsomorphlyPlugins());
+    this.isomorphlyPluginAnnotatedElements.putAll(this.packageScanner.getIsomorphlyPlugins());
 
     this.componentAnnotations.addAll(this.packageScanner.getComponentsDefinitions());
 
@@ -78,7 +80,7 @@ public class IsomorphlyEngine {
     this.pluginsDefinitions.addAll(this.packageScanner.getPluginsDefinitions());
   }
 
-  public final List<Class<?>> getIsomorphlyPluginAnnotatedElements() {
+  public final Map<String, Class<?>> getIsomorphlyPluginAnnotatedElements() {
     return isomorphlyPluginAnnotatedElements;
   }
 
