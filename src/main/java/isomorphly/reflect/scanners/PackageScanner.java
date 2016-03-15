@@ -217,5 +217,9 @@ public class PackageScanner {
   public Set<Class<?>> getPluginsDefinitions() {
     return this.pluginClasses;
   }
+  
+  public Map<String, Map<String, Method>> getValidMethodsMap() {
+    return this.validMethodsMap;
+  }
 
 }
