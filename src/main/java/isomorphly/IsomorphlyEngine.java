@@ -40,7 +40,6 @@ public class IsomorphlyEngine {
 
     pluginsDefinitions = new ArrayList<>();
     
-    registry = new IsomorphlyRegistry();
 
   }
 
@@ -64,6 +63,8 @@ public class IsomorphlyEngine {
       throw new IsomorphlyValidationException("no valid @Component Annotations found.");
     }
 
+    this.registry = new IsomorphlyRegistry(this.packageScanner.getValidMethodsMap());
+
   }
 
   private void scanAnnotatedElements() throws IsomorphlyValidationException {
@@ -76,8 +77,6 @@ public class IsomorphlyEngine {
 
     this.pluginsDefinitions.addAll(this.packageScanner.getPluginsDefinitions());
   }
-
-
 
   public final List<Class<?>> getIsomorphlyPluginAnnotatedElements() {
     return isomorphlyPluginAnnotatedElements;
@@ -93,6 +92,10 @@ public class IsomorphlyEngine {
 
   public boolean isInitialized() {
     return this.initialized;
+  }
+  
+  public void invokeMethod() {
+    
   }
 
 
