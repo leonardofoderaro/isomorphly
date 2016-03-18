@@ -72,13 +72,13 @@ public class IsomorphlyEngineTest extends TestCase
     {
 		engine.init();
     	
-    	List<Class<?>> components = engine.getIsomorphlyComponents();
+    	Map<String, Class<?>> components = engine.getIsomorphlyComponents();
     	
     	assertNotNull("Components should not null. Is engine's initialization ok?", components);
 
     	assertTrue("Components should not be empty. Is engine's initialization ok?", components.size() > 0);
     	
-    	for (Class<?> cls : components) {
+    	for (Class<?> cls : components.values()) {
     		assertTrue(cls.isAnnotation());
     		assertTrue(cls.isAnnotationPresent(Component.class));
     	}

@@ -21,7 +21,7 @@ public class PackageScanner {
 
   private Map<String, Class<?>> isomorphlyPlugins;
 
-  private Set<Class<?>> components;
+  private Map<String, Class<?>> components;
 
   private Set<Class<?>> methodCallContexts;
 
@@ -36,7 +36,7 @@ public class PackageScanner {
 
     this.isomorphlyPlugins = new HashMap<>();
 
-    this.components = new HashSet<>();
+    this.components = new HashMap<>();
 
     this.methodCallContexts = new HashSet<>();
 
@@ -93,7 +93,7 @@ public class PackageScanner {
       Set<Class<?>> foundComponents = reflections.getTypesAnnotatedWith(Component.class);
       for (Class<?> c : foundComponents) {
         if (c.isAnnotation()) {
-          components.add(c);
+          components.put(c.getName(), c);
         } else {
           throw new IsomorphlyValidationException("@Group Annotation can be used only on Annotations.");
         }
@@ -209,7 +209,7 @@ public class PackageScanner {
     return this.isomorphlyPlugins;
   }
 
-  public Set<Class<?>> getComponentsDefinitions() {
+  public Map<String, Class<?>> getComponentsDefinitions() {
     return this.components;
   }
 

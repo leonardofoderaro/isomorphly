@@ -31,7 +31,7 @@ public class IsomorphlyEngine {
   // elements annotated with IsomorphlyPlugin
   private Map<String, Class<?>> isomorphlyPluginAnnotatedElements;
 
-  private List<Class<?>> componentAnnotations;
+  private Map<String, Class<?>> componentAnnotations;
 
   private String[] packageNames;
 
@@ -53,7 +53,7 @@ public class IsomorphlyEngine {
 
     isomorphlyPluginAnnotatedElements = new HashMap<>();
 
-    componentAnnotations = new ArrayList<>();
+    componentAnnotations = new HashMap<>();
 
     methodCallContexts = new ArrayList<>();
 
@@ -90,7 +90,7 @@ public class IsomorphlyEngine {
 
     this.isomorphlyPluginAnnotatedElements.putAll(this.packageScanner.getIsomorphlyPlugins());
 
-    this.componentAnnotations.addAll(this.packageScanner.getComponentsDefinitions());
+    this.componentAnnotations.putAll(this.packageScanner.getComponentsDefinitions());
 
     this.methodCallContexts.addAll(this.packageScanner.getMethodCallContexts());
 
@@ -101,7 +101,7 @@ public class IsomorphlyEngine {
     return isomorphlyPluginAnnotatedElements;
   }
 
-  public final List<Class<?>> getIsomorphlyComponents() {
+  public final Map<String, Class<?>> getIsomorphlyComponents() {
     return componentAnnotations;
   }
 
